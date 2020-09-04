@@ -1,0 +1,16 @@
+{
+    "title": "SSS",
+    "rules": [
+        {
+            "description": "SSS1",
+            "manipulators": [
+                {
+                    "from": {
+                        "key_code": "spacebar"
+                    },
+                    "type": "basic"
+                }
+            ]
+        }
+    ]
+}

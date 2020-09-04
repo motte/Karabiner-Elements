@@ -1,3 +1,0 @@
-target 'Updater' do
-  pod 'Sparkle'
-end

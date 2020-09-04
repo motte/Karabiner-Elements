@@ -1,8 +1,8 @@
 # Files
 
-* spdlog:
-  * version: v0.10.0
-  * url: https://github.com/gabime/spdlog
-* json:
-  * version: v2.0.3
-  * url: https://github.com/nlohmann/json
+-   Karabiner-VirtualHIDDevice:
+    -   version: v6.10.1
+    -   url: <https://github.com/pqrs-org/Karabiner-VirtualHIDDevice/releases>
+-   Sparkle:
+    -   version: 1.23.0
+    -   url: <https://github.com/sparkle-project/Sparkle/releases>

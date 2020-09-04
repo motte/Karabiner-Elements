@@ -1,0 +1,27 @@
+{
+    "title": "EEE",
+    "rules": [
+        {
+            "description": "EEE1",
+            "manipulators": [
+                {
+                    "from": {
+                        "key_code": "spacebar"
+                    },
+                    "type": "basic"
+                }
+            ]
+        },
+        {
+            "description": "EEE2",
+            "manipulators": [
+                {
+                    "from": {
+                        "key_code": "spacebar"
+                    },
+                    "type": "basic"
+                }
+            ]
+        }
+    ]
+}

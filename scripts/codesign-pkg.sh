@@ -1,25 +1,38 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
-CODESIGN_IDENTITY='79E265756C43F62E157DB5C8FA405B54428653F9'
+set -u # forbid undefined variables
+set -e # forbid command failure
 
-# ------------------------------------------------------------
-PATH=/bin:/sbin:/usr/bin:/usr/sbin; export PATH
+readonly PATH=/bin:/sbin:/usr/bin:/usr/sbin
+export PATH
 
-if [ ! -e "$1" ]; then
-    echo "[ERROR] Invalid argument: '$1'"
-    exit 1
-fi
+readonly CODE_SIGN_IDENTITY=$(bash $(dirname $0)/get-installer-codesign-identity.sh)
+readonly LOGFILE="$(dirname $0)/productsign.log"
 
-# ------------------------------------------------------------
-# sign
-logfile="`dirname $0`/productsign.log"
-if 1>"$logfile" 2>&1 productsign --sign "$CODESIGN_IDENTITY" "$1" "$1".signed; then
-    cat $logfile
-    mv "$1".signed "$1"
-else
-    echo -ne '\033[31;40m'
-    cat $logfile
-    echo -ne '\033[0m'
-fi
-rm -f "$logfile"
-rm -f "$1".signed
+err() {
+    echo "[$(date +'%Y-%m-%dT%H:%M:%S%z')]: $@" >&2
+}
+
+main() {
+    if [ ! -e "$1" ]; then
+        err "Invalid argument: '$1'"
+        exit 1
+    fi
+
+    #
+    # Sign with codesign
+    #
+
+    if productsign 1>"$LOGFILE" 2>&1 --sign "$CODE_SIGN_IDENTITY" "$1" "$1".signed; then
+        cat $LOGFILE
+        mv "$1".signed "$1"
+    else
+        echo -ne '\033[31;40m'
+        cat "$LOGFILE"
+        echo -ne '\033[0m'
+    fi
+    rm -f "$LOGFILE"
+    rm -f "$1".signed
+}
+
+main "$1"

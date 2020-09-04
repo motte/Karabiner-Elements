@@ -1,21 +1,13 @@
-#CONFIGURATION = Debug
-CONFIGURATION = Release
-
 all:
-	../../../scripts/setversion.sh
-	xcodebuild -alltargets -configuration $(CONFIGURATION) build
+	make -C ../lib/KarabinerKit
+	make build_xcode
 
-clean:
-	rm -rf build
-	rm -f Info.plist
-	rm -f *.xcodeproj/*.mode1
-	rm -f *.xcodeproj/*.mode1v3
-	rm -f *.xcodeproj/*.pbxuser
-	rm -rf *.xcodeproj/xcuserdata
-	rm -rf *.xcodeproj/project.xcworkspace/xcuserdata
+clean: clean_builds
 
-xcode:
-	open *.xcodeproj
+run:
+	bash ../../../scripts/codesign.sh build_xcode
+	# Do not execute Karabiner-EventViewer.app/Contents/MacOS/Karabiner-EventViewer directly.
+	# We have to run as app in order to apply the user approval for Input Monitoring.
+	open ./build_xcode/build/Release/Karabiner-EventViewer.app
 
-run: all
-	./build/Release/EventViewer.app/Contents/MacOS/EventViewer
+include ../../Makefile.rules

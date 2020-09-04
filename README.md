@@ -1,48 +1,125 @@
-[![Build Status](https://travis-ci.org/tekezo/Karabiner-Elements.svg?branch=master)](https://travis-ci.org/tekezo/Karabiner-Elements)
-[![License](https://img.shields.io/badge/license-Public%20Domain-blue.svg)](https://github.com/tekezo/Karabiner-Elements/blob/master/LICENSE.md)
+[![Build Status](https://github.com/pqrs-org/Karabiner-Elements/workflows/Karabiner-Elements%20CI/badge.svg)](https://github.com/pqrs-org/Karabiner-Elements/actions)
+[![License](https://img.shields.io/badge/license-Public%20Domain-blue.svg)](https://github.com/pqrs-org/Karabiner-Elements/blob/master/LICENSE.md)
 
 # Karabiner-Elements
 
-Karabiner-Elements is the subset of the next generation Karabiner for macOS Sierra.
+Karabiner-Elements is a powerful utility for keyboard customization on macOS Sierra or later.
 
-## Project Status
+## Download
 
-Karabiner-Elements works fine except Preferences GUI.
+You can download Karabiner-Elements from [official site](https://karabiner-elements.pqrs.org/).
 
-You can download the latest Karabiner-Elements from https://pqrs.org/latest/karabiner-elements-latest.dmg
+### Old releases
 
-[Usage](usage/README.md)
+You can download previous versions of Karabiner-Elements from [here](https://karabiner-elements.pqrs.org/docs/releasenotes/).
 
-## Features
+## Supported systems
 
-* Simple key modification (change keys to another keys)
-* Support Secure Keyboard Entry (eg. Terminal, Password prompt)
-* Modifier flags sharing with all connected keyboards.
+-   macOS Sierra (10.12)
+-   macOS High Sierra (10.13)
+-   macOS Mojave (10.14)
+-   macOS Catalina (10.15)
 
-## How to build
+## Usage
 
-System requirements:
+<https://karabiner-elements.pqrs.org/docs/>
 
-* OS X 10.11+
-* Xcode 7.2+
-* Command Line Tools for Xcode
-* Boost 1.61.0+ (header-only) http://www.boost.org/
+## Donations
 
-Please install Boost into `/opt/local/include/boost`. (eg. `/opt/local/include/boost/version.hpp`)
+If you would like to contribute financially to the development of Karabiner Elements, donations can be made via <https://karabiner-elements.pqrs.org/docs/pricing/>
 
-### Step 1: Getting source code
+---
 
-Clone the source from github.
+## For developers
 
-```
-git clone --depth 1 https://github.com/tekezo/Karabiner-Elements.git
-```
+### How to build
 
-### Step 2: Building a package
+System requirements to build Karabiner-Elements:
 
-```
-cd Karabiner-Elements
-make
-```
+-   macOS 10.15+
+-   Xcode 11+
+-   Command Line Tools for Xcode
+-   CMake (`brew install cmake`)
 
-The `make` script will create a redistributable **Karabiner-Elements-VERSION.dmg** in the current directory.
+#### Steps
+
+1.  Get source code by executing a following command in Terminal.app.
+
+    ```shell
+    git clone --depth 1 https://github.com/pqrs-org/Karabiner-Elements.git
+    cd Karabiner-Elements
+    git submodule update --init --recursive --depth 1
+    ```
+
+2.  Find your codesign identity if you have one.<br />
+    (Skip this step if you don't have your codesign identity.)
+
+    ```shell
+    security find-identity -p codesigning -v | grep 'Developer ID Application'
+    ```
+
+    The result is as follows.
+
+    ```text
+    1) 8D660191481C98F5C56630847A6C39D95C166F22 "Developer ID Application: Fumihiko Takayama (G43BCU2T37)"
+    ```
+
+    Your codesign identity is `8D660191481C98F5C56630847A6C39D95C166F22` in the above case.
+
+3.  Set environment variable to use your codesign identity.<br />
+    (Skip this step if you don't have your codesign identity.)
+
+    ```shell
+    export PQRS_ORG_CODE_SIGN_IDENTITY=8D660191481C98F5C56630847A6C39D95C166F22
+    ```
+
+4.  Find your codesign identity for installer signing if you have one.<br />
+    (Skip this step if you don't have your codesign identity.)
+
+    ```shell
+    security find-identity -p basic -v | grep 'Developer ID Installer'
+    ```
+
+    The result is as follows.
+
+    ```text
+    1) C86BB5F7830071C7B0B07D168A9A9375CC2D02C5 "Developer ID Installer: Fumihiko Takayama (G43BCU2T37)"
+    ```
+
+    Your codesign identity is `C86BB5F7830071C7B0B07D168A9A9375CC2D02C5` in the above case.
+
+5.  Set environment variable to use your codesign identity for installer signing.<br />
+    (Skip this step if you don't have your codesign identity.)
+
+    ```shell
+    export PQRS_ORG_INSTALLER_CODE_SIGN_IDENTITY=C86BB5F7830071C7B0B07D168A9A9375CC2D02C5
+    ```
+
+6.  Build a package by executing a following command in Terminal.app.
+
+    ```shell
+    make package
+    ```
+
+    The `make` script will create a redistributable **Karabiner-Elements-VERSION.dmg** in the current directory.
+
+#### Note: About pre-built binaries in the source tree
+
+Karabiner-Elements uses some pre-built binaries in the source tree.
+
+-   `src/vendor/Karabiner-VirtualHIDDevice/dist/*.kext`
+-   `src/vendor/Sparkle/Sparkle.framework`
+
+Above `make package` command does not rebuild these binaries.<br/>
+(These binaries will be copied in the distributed package.)
+
+If you want to rebuild these binaries, you have to build them manually.<br/>
+Please follow the instruction of these projects.
+
+##### About rebuilding kext in Karabiner-VirtualHIDDevice
+
+If you want to build kext in Karabiner-VirtualHIDDevice, macOS requires a valid certificate which be able to sign the built kext.<br/>
+Unless such certificate, macOS refuses to load the built kext.<br/>
+Please read a documentation about [System Integrity Protection Guide](https://developer.apple.com/library/archive/documentation/Security/Conceptual/System_Integrity_Protection_Guide/KernelExtensions/KernelExtensions.html) for more details.
+
+(We are including the pre-built kext binary to avoid the restriction that macOS requires a uncommon certificate.)

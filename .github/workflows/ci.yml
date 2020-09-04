@@ -1,0 +1,19 @@
+name: Karabiner-Elements CI
+
+on: [push, pull_request]
+
+jobs:
+  build:
+    runs-on: macOS-latest
+
+    steps:
+      - uses: actions/checkout@v1
+        with:
+          fetch-depth: 1
+          submodules: recursive
+      - name: package
+        run: make package
+      - name: appendix
+        run: ruby scripts/reduce-logs.rb 'make -C appendix'
+      - name: tests
+        run: ruby scripts/reduce-logs.rb 'make -C tests'

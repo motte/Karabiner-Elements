@@ -1,20 +1,20 @@
-CONFIGURATION = Release
+all: build_xcode
 
-all:
-	make -C ../../share
-	xcodebuild -alltargets -configuration $(CONFIGURATION) build
+clean: clean_builds
 
-clean:
-	rm -rf build
-	rm -f *.xcodeproj/*.mode1
-	rm -f *.xcodeproj/*.mode1v3
-	rm -f *.xcodeproj/*.pbxuser
-	rm -rf *.xcodeproj/xcuserdata
-	rm -rf *.xcodeproj/project.xcworkspace/xcuserdata
+prepare_signed_binary: all
+	# Input Monitoring approval is required since macOS Catalina.
+	# The approval state is not taken over to new binary from old one if the certificate is changed.
+	# Thus, we sign the binary if we can do it.
+	mkdir -p build_xcode/signed_bin/tmp/bin
+	cp build_xcode/build/Release/karabiner_grabber build_xcode/signed_bin/tmp/bin
+	bash ../../../scripts/codesign.sh build_xcode/signed_bin
 
-xcode:
-	open *.xcodeproj
-
-install: all
-	sudo install -m 755 ./build/Release/karabiner_grabber '/Library/Application Support/org.pqrs/Karabiner-Elements/bin/karabiner_grabber'
+install: prepare_signed_binary
+	sudo install \
+		-m 755 \
+		build_xcode/signed_bin/tmp/bin/karabiner_grabber \
+		'/Library/Application Support/org.pqrs/Karabiner-Elements/bin/karabiner_grabber'
 	sudo killall karabiner_grabber
+
+include ../../Makefile.rules

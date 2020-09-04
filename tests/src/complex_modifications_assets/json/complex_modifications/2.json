@@ -1,0 +1,27 @@
+{
+    "title": "FFF",
+    "rules": [
+        {
+            "description": "FFF1",
+            "manipulators": [
+                {
+                    "from": {
+                        "key_code": "spacebar"
+                    },
+                    "type": "basic"
+                }
+            ]
+        },
+        {
+            "description": "FFF2",
+            "manipulators": [
+                {
+                    "from": {
+                        "key_code": "spacebar"
+                    },
+                    "type": "basic"
+                }
+            ]
+        }
+    ]
+}
